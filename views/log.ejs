@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Kafka Live</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Kafka Live Cast</h1>
+
+      <form id="tidForm">
+        <input
+          type="text"
+          id="tidInput"
+          name="tid"
+          placeholder="Enter tid..."
+        />
+
+        <!-- <label for="topic">Izaberi topic:</label>
+          <select id="topic" name="topic">
+            <option value="event-log">Event Log</option>
+            <option value="mdm-response">MDM Response</option>
+            <option value="event-system">Event System</option>
+          </select> -->
+        <input type="submit" value="Submit" />
+        <button id="stopConsumerBtn">Stop Consumer</button>
+        <!-- Added Stop Consumer button -->
+      </form>
+      <!-- <img src="def_img.jpg" alt="Payten" /> -->
+      <div class="messages">
+        <ul id="message-list">
+          <!-- <h2><%= messages.key %></h2> -->
+          <% messages.forEach(message => { %> <% }); %>
+        </ul>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js.js"></script>
+    <script></script>
+  </body>
+</html>

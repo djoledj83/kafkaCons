@@ -30,8 +30,8 @@ const kafka = new Kafka({
 })
 // Kafka consumer setup
 const consumer = kafka.consumer({ groupId: process.env.GROUP_ID });
-// Kafka producer setup
-const producer = kafka.producer({ groupId: process.env.GROUP_ID });
+
+
 
 // Route to render the index page
 let topic;
@@ -55,7 +55,7 @@ app.post('/term', (req, res) => {
     // In this example, I'm storing it in a global variable
     tid = req.body.tid;
     // topic = req.body.topic;
-    // const topics = ['event-log', 'mdm-response', 'event-system', 'event-transaction'];
+    // const topics = ['event-log', 'mdm-response', 'event-system'];
     const topics = ['event-transaction'];
     // const topics = ['event-system'];
     res.sendStatus(200); // Respond with a success status
@@ -115,116 +115,14 @@ app.post('/term', (req, res) => {
     runConsumer().catch(console.error);
 });
 
-app.post('/sendMessage', (req, res) => {
+app.post('/log', (req, res) => {
     // Store the tid as needed
     // For example, you can store it in a global variable
     // or save it to a database
     // In this example, I'm storing it in a global variable
-
-    const runProducer = async () => {
-        message = req.body;
-        console.log(JSON.stringify(message))
-        try {
-            // Connect the producer (you can do this once globally in your app)
-            await producer.connect();
-
-            // Send message to the "mdm-request" topic with acks=all
-            await producer.send({
-                topic: 'mdm-request',
-                acks: -1,  // acks=all in Kafka means waiting for all replicas (-1 in kafkajs)
-                messages: [
-                    { value: JSON.stringify(message.message) },
-                ],
-            });
-
-            console.log('Message sent successfully with acks=all');
-        } catch (error) {
-            console.error('Error producing message:', error);
-        } finally {
-            // Optionally, disconnect after sending the message
-            await producer.disconnect();
-        }
-    };
-    runProducer().catch(console.error);
-
+    tid = req.body.tid;
     // topic = req.body.topic;
-    const topic = 'mdm-request';
-    // const topics = ['event-system'];
-    res.sendStatus(200); // Respond with a success status
-
-    // Function to run the Kafka consumer
-    const runConsumer = async () => {
-        await consumer.connect();
-
-        // await consumer.subscribe({ topic, fromBeginning: true });
-        await consumer.subscribe({ topic });
-
-        await consumer.run({
-            eachMessage: async ({ topic, partition, message }) => {
-                try {
-                    if (!message || !message.key || !message.value) {
-                        console.error('Invalid message:', message);
-                        return;
-                    }
-                    const key = message.key.toString();
-                    const value = JSON.parse(message.value);
-
-                    if (key === tid && value.type === 'log') {
-                        // Add log message to the array in the dataStore
-                        dataStore.messages.push({
-                            key: key,
-                            message: value.message,
-                        });
-
-                        console.log('Received log message for tid:', tid);
-
-                        // Emit the log messages to all connected clients
-                        io.emit('logUpdate', { key, message: value.message });
-                    }
-                } catch (error) {
-                    console.error('Error processing message:', error);
-                }
-            },
-        });
-    };
-    runConsumer().catch(console.error);
-});
-
-
-app.post('/doScreenShot', (req, res) => {
-    // Store the tid as needed
-    // For example, you can store it in a global variable
-    // or save it to a database
-    // In this example, I'm storing it in a global variable
-
-    const runProducer = async () => {
-        message = req.body;
-        console.log(JSON.stringify(message))
-        try {
-            // Connect the producer (you can do this once globally in your app)
-            await producer.connect();
-
-            // Send message to the "mdm-request" topic with acks=all
-            await producer.send({
-                topic: 'mdm-request',
-                acks: -1,  // acks=all in Kafka means waiting for all replicas (-1 in kafkajs)
-                messages: [
-                    { value: JSON.stringify(message.message) },
-                ],
-            });
-
-            console.log('Message sent successfully with acks=all');
-        } catch (error) {
-            console.error('Error producing message:', error);
-        } finally {
-            // Optionally, disconnect after sending the message
-            await producer.disconnect();
-        }
-    };
-    runProducer().catch(console.error);
-
-    // topic = req.body.topic;
-    const topic = 'mdm-request';
+    const topic = 'event-log';
     // const topics = ['event-system'];
     res.sendStatus(200); // Respond with a success status
 

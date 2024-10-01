@@ -47,6 +47,89 @@ document.getElementById("stopConsumerBtn").addEventListener("click", function (e
         });
 });
 
+
+// Produce Notification Message
+document.getElementById("sendButton").addEventListener("click", function (event) {
+    event.preventDefault();
+
+    const tidInput = document.getElementById("tidInput").value.trim();
+    const messageInput = document.getElementById("messageInput").value.trim();
+
+    // Dynamically construct logMessage object
+    const logMessage = {
+        type: "MDM",
+        profileId: tidInput,
+        command: "pushNotification",
+        id: Math.random().toString(36).substr(2, 9), // More unique ID using a random string
+        timestamp: new Date().toISOString(), // Current timestamp
+        properties: {
+            type: "yesNoQuestion",
+            title: "Notification",
+            message: messageInput,
+            ttl: 30,
+            image: { content: "" },
+            ignorable: false
+        }
+    };
+
+    fetch("/sendMessage", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ tid: tidInput, message: logMessage }),
+    })
+        .then(response => {
+            if (response.ok) {
+                console.log("Message sent successfully");
+            } else {
+                console.error("Failed to send message", response.status);
+            }
+        })
+        .catch(error => {
+            console.error("Error sending:", error);
+        });
+});
+
+// Trigger Screenshot
+document.getElementById("doScreenShot").addEventListener("click", function (event) {
+    event.preventDefault();
+
+    const tidInput = document.getElementById("tidInput").value.trim();
+
+    // Dynamically construct screenshot message
+    const scrShot = {
+        type: "MDM",
+        profileId: tidInput,
+        command: "screenCapture",
+        properties: {
+            type: "screenshot",
+            screenContentType: "responseBase64"
+        },
+        id: Math.random().toString(36).substr(2, 9), // Unique ID using random string
+        timestamp: new Date().toISOString(),
+    };
+
+    fetch("/doScreenShot", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ tid: tidInput, message: scrShot }),
+    })
+        .then(response => {
+            if (response.ok) {
+                console.log("Screenshot request sent successfully");
+            } else {
+                console.error("Failed to send screenshot request", response.status);
+            }
+        })
+        .catch(error => {
+            console.error("Error sending screenshot request:", error);
+        });
+});
+
+
 // Function to update the message list
 const updateMessageList = (backend_msg) => {
     const messagesContainer = document.querySelector(".messages");

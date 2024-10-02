@@ -106,7 +106,7 @@ document.getElementById("doScreenShot").addEventListener("click", function (even
             type: "screenshot",
             screenContentType: "responseBase64"
         },
-        id: Math.random().toString(36).substr(2, 9), // Unique ID using random string
+        id: "Milos - " + Math.random().toString(36).substr(2, 9), // Unique ID using random string
         timestamp: new Date().toISOString(),
     };
 
@@ -130,21 +130,77 @@ document.getElementById("doScreenShot").addEventListener("click", function (even
 });
 
 
-// Function to update the message list
+// Trigger Screenshot and open modal
+document.getElementById("doScreenShot").addEventListener("click", function (event) {
+    event.preventDefault();
+
+    const tidInput = document.getElementById("tidInput").value.trim();
+
+    // Dynamically construct screenshot message
+    const scrShot = {
+        type: "MDM",
+        profileId: tidInput,
+        command: "screenCapture",
+        properties: {
+            type: "screenshot",
+            screenContentType: "responseBase64"
+        },
+        id: "Milos - " + Math.random().toString(36).substr(2, 9), // Unique ID using random string
+        timestamp: new Date().toISOString(),
+    };
+
+    fetch("/doScreenShot", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ tid: tidInput, message: scrShot }),
+    })
+        .then(response => {
+            if (response.ok) {
+                console.log("Screenshot request sent successfully");
+
+                // Immediately open the modal after sending the request
+                const screenshotModal = new bootstrap.Modal(document.getElementById("screenshotModal"));
+                screenshotModal.show(); // Show the modal
+            } else {
+                console.error("Failed to send screenshot request", response.status);
+            }
+        })
+        .catch(error => {
+            console.error("Error sending screenshot request:", error);
+        });
+});
+
+// Update the message list and show the screenshot in the modal
 const updateMessageList = (backend_msg) => {
     const messagesContainer = document.querySelector(".messages");
-    const accordionId = `accordion_${backend_msg.key}_${Date.now()}`; // Add timestamp to make IDs unique
 
-    // Determine the color based on term response
-    const termResponse = backend_msg.message.properties?.result?.terminalResponse || ''; // Fetch the terminal response value
-    const accordionClass = termResponse === "000" ? "bg-success" : "bg-danger"; // Assign the class based on the response
+    const image = backend_msg.message.properties?.screenCapture;
+    if (image) {
+        // Display the screenshot in the modal if it exists
+        document.getElementById("screenshotImage").src = `data:image/png;base64,${image}`;
 
+        // If the modal isn't already shown, display it
+        const screenshotModal = new bootstrap.Modal(document.getElementById("screenshotModal"));
+        screenshotModal.show();
+    } else {
+        console.log("No screenshot available.");
+    }
+
+    // Continue with the rest of the message handling...
+    const accordionId = `accordion_${backend_msg.key}_${Date.now()}`;
+    const result = backend_msg.message.properties?.result || {};
+    const termResponse = result.terminalResponse || '';
+    const code = result.code || 'N/A';
+    const messageText = result.message || 'No message';
+    const accordionClass = termResponse === "000" ? "bg-success" : "bg-danger";
 
     const newAccordionItem = `
     <div class="accordion-item">
         <h2 class="accordion-header" id="heading_${backend_msg.key}">
             <button class="accordion-button collapsed ${accordionClass} text-white align-content-around" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_${accordionId}" aria-expanded="false" aria-controls="collapse_${accordionId}">
-                <strong>Tid:&nbsp;${backend_msg.key}</strong> <- || -> <strong>Timestamp:</strong>&nbsp;${backend_msg.message.timestamp} <- || -> <strong>Status:</strong>&nbsp;${backend_msg.message.properties.result.code}<- || -> <strong>Messsage:</strong>&nbsp;${backend_msg.message.properties.result.message}<- || -> <strong>Term_Resp:</strong>&nbsp;${backend_msg.message.properties.result.terminalResponse}
+                <strong>Tid:&nbsp;${backend_msg.key}</strong> <- || -> <strong>Timestamp:</strong>&nbsp;${backend_msg.message.timestamp} <- || -> <strong>Status:</strong>&nbsp;${code} <- || -> <strong>Message:</strong>&nbsp;${messageText} <- || -> <strong>Term_Resp:</strong>&nbsp;${termResponse}
             </button>
         </h2>
         <div id="collapse_${accordionId}" class="accordion-collapse collapse" aria-labelledby="heading_${backend_msg.key}" data-bs-parent="#accordionExample">
@@ -154,18 +210,8 @@ const updateMessageList = (backend_msg) => {
         </div>
     </div>`;
 
-    // messagesContainer.querySelector('.accordion').insertAdjacentHTML('beforeend', newAccordionItem); Ovo ispisuje gresku na kraju
-    messagesContainer.querySelector('.accordion').insertAdjacentHTML('afterbegin', newAccordionItem); // Ovo ispisuje najnovije  poruke na vrh.
-
-    // Check if there is a screenCapture and add image
-    if (backend_msg.message.properties && backend_msg.message.properties.screenCapture) {
-        const image = backend_msg.message.properties.screenCapture;
-        const img = document.createElement("img");
-        img.src = `data:image/png;base64,${image}`;
-        img.alt = "Screen Capture";
-        img.className = "image";
-        document.querySelector(".messages").appendChild(img);
-    }
+    // Insert the accordion item into the DOM
+    messagesContainer.querySelector('.accordion').insertAdjacentHTML('afterbegin', newAccordionItem);
 };
 
 // Listen for 'message' events from the server

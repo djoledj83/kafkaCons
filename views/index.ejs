@@ -14,42 +14,45 @@
   </head>
   <body>
     <div class="container">
-      <h1>Kafka Live Cast</h1>
+      <div class="poruke">
+        <h1>Kafka Live Cast</h1>
 
-      <form id="tidForm" class="pb-4">
-        <label for="tidInput">Enter TID:</label>
-        <input
-          type="text"
-          id="tidInput"
-          name="tid"
-          placeholder="Enter tid..."
-          class="form-control"
-        />
-        <input
-          type="text"
-          id="messageInput"
-          name="message"
-          placeholder="Enter message..."
-          class="form-control"
-        />
-        <br />
+        <form id="tidForm" class="pb-4">
+          <label for="tidInput">Enter TID:</label>
+          <input
+            type="text"
+            id="tidInput"
+            name="tid"
+            placeholder="Enter tid..."
+            class="form-control"
+          />
+          <input
+            type="text"
+            id="messageInput"
+            name="message"
+            placeholder="Enter message..."
+            class="form-control"
+          />
+          <br />
 
-        <input type="submit" value="Submit" class="btn btn-primary" />
-        <button id="stopConsumerBtn" type="button" class="btn btn-danger">
-          Stop Consumer
-        </button>
-        <button id="sendButton" type="button" class="btn btn-secondary">
-          Send Message
-        </button>
-        <button id="doScreenShot" type="button" class="btn btn-secondary">
-          Screenshot
-        </button>
-      </form>
+          <input type="submit" value="Submit" class="btn btn-primary" />
+          <button id="stopConsumerBtn" type="button" class="btn btn-danger">
+            Stop Consumer
+          </button>
+          <button id="sendButton" type="button" class="btn btn-secondary">
+            Send Message
+          </button>
+          <button id="doScreenShot" type="button" class="btn btn-secondary">
+            Screenshot
+          </button>
+        </form>
 
-      <div class="messages">
-        <div class="accordion" id="accordionExample"></div>
-        <!-- Accordion container -->
+        <div class="messages">
+          <div class="accordion" id="accordionExample">messages</div>
+          <!-- Accordion container -->
+        </div>
       </div>
+      <div class="scrshot">Screeen</div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>

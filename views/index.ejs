@@ -13,11 +13,11 @@
     <title>Kafka Live</title>
   </head>
   <body>
-    <div class="container">
+    <div class="container d-flex justify-content-around w-75 mt-5">
       <div class="poruke">
         <h1>Kafka Live Cast</h1>
 
-        <form id="tidForm" class="pb-4">
+        <form id="tidForm" class="pb-4 mt-4">
           <label for="tidInput">Enter TID:</label>
           <input
             type="text"
@@ -33,6 +33,20 @@
             placeholder="Enter message..."
             class="form-control"
           />
+          <input
+            type="text"
+            id="secondsInput"
+            name="durationseconds"
+            placeholder="Enter duration seconds..."
+            class="form-control"
+          />
+          <input
+            type="text"
+            id="intervalInput"
+            name="intervalseconds"
+            placeholder="Enter interval seconds..."
+            class="form-control"
+          />
           <br />
 
           <input type="submit" value="Submit" class="btn btn-primary" />
@@ -46,13 +60,16 @@
             Screenshot
           </button>
         </form>
-
-        <div class="messages">
-          <div class="accordion" id="accordionExample">messages</div>
-          <!-- Accordion container -->
-        </div>
       </div>
-      <div class="scrshot">Screeen</div>
+      <div class="screenshotImage">
+        <img src="def_img_c.jpg" alt="Payten" />
+      </div>
+    </div>
+    <div class="messages m-auto w-75">
+      <div class="accordion-container">
+        <div class="accordion mt-5" id="accordionExample"></div>
+        <!-- Accordion container -->
+      </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>

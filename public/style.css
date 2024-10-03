@@ -1,71 +1,19 @@
 * {
-    border: 1px solid red;
-}
-.container {
-    display: flex;
-    flex-direction: row;
-}
-body {
-    padding: 5px;
-    margin: 0;
-    box-sizing: border-box;
     /* border: 1px solid red; */
-    /* font-size: 10px; */
 }
+
 img {
     height: 500px;
+    width: auto;
     border-radius: 20px;
 }
-
- .key {
-    color: white;
-    font-weight: bold;
-    background-color: #FF193B;
-    padding: 5px;
-    border-radius: 5px 0 0 5px;
-    font-size: 12px;
-}
-.message {
-    color: rgb(46, 46, 46);
-    font-weight: 100;
-    font-size: 12px;
-    width: 600px;
-    /* word-wrap: break-word; */
-}
-br {
-    line-height: 5px;
-}
-ul {
-    padding: 0;
-}
-li {
-    color: white;
-    list-style: none;
-    background-color: #d3ffaf;
-    margin: 5px;
-    border-radius: 5px;
-    padding: 5px 0 5px 0;
-    font-size: 12px;
-
-}
-.level {
-    color: rgb(46, 46, 46);
-    background-color: rgb(55, 232, 255);
-    padding: 5px;
-    font-size: 12px;
-    padding: 5px;
-}
-.bold {
-    font-weight: bold;
-    padding: 5px;
-}
-.source {
-    color: rgb(46, 46, 46);
-    background-color: #FFC719;
-    padding: 5px;
-    font-size: 12px;
+.accordion-container {
+    max-height: 200px; /* Podesi ovo na visinu koja odgovara otprilike 5 stavki */
+    overflow-y: auto;
 }
 
-h1 {
-    font-size: clamp(12px, 4vw, 32px);
-}
+/* .message {
+        color: rgb(46, 46, 46);
+        font-weight: 100;
+        font-size: 12px;
+} */

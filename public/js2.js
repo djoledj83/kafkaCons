@@ -1,28 +1,27 @@
 const socket = io();
 
-// Submit the tid form
+// Submit the TID form
 document.getElementById("tidForm").addEventListener("submit", function (event) {
     event.preventDefault();
 
-    const tidInput = document.getElementById("tidInput");
-    const tid = tidInput.value.trim();
-    console.log(tid);
+    const tidInput = document.getElementById("tidInput").value.trim();
+    console.log("Submitted TID:", tidInput);
 
     fetch("/term", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ tid }),
+        body: JSON.stringify({ tid: tidInput }),
     })
         .then((response) => {
             if (!response.ok) {
-                throw new Error("Failed to submit tid");
+                throw new Error("Failed to submit TID");
             }
-            console.log("Tid submitted successfully");
+            console.log("TID submitted successfully");
         })
         .catch((error) => {
-            console.error("Error submitting tid:", error);
+            console.error("Error submitting TID:", error);
         });
 });
 
@@ -47,7 +46,6 @@ document.getElementById("stopConsumerBtn").addEventListener("click", function (e
         });
 });
 
-
 // Produce Notification Message
 document.getElementById("sendButton").addEventListener("click", function (event) {
     event.preventDefault();
@@ -55,13 +53,12 @@ document.getElementById("sendButton").addEventListener("click", function (event)
     const tidInput = document.getElementById("tidInput").value.trim();
     const messageInput = document.getElementById("messageInput").value.trim();
 
-    // Dynamically construct logMessage object
     const logMessage = {
         type: "MDM",
         profileId: tidInput,
         command: "pushNotification",
-        id: Math.random().toString(36).substr(2, 9), // More unique ID using a random string
-        timestamp: new Date().toISOString(), // Current timestamp
+        id: Math.random().toString(36).substr(2, 9),
+        timestamp: new Date().toISOString(),
         properties: {
             type: "yesNoQuestion",
             title: "Notification",
@@ -81,13 +78,13 @@ document.getElementById("sendButton").addEventListener("click", function (event)
     })
         .then(response => {
             if (response.ok) {
-                console.log("Message sent successfully");
+                console.log("Notification sent successfully");
             } else {
-                console.error("Failed to send message", response.status);
+                console.error("Failed to send notification", response.status);
             }
         })
         .catch(error => {
-            console.error("Error sending:", error);
+            console.error("Error sending notification:", error);
         });
 });
 
@@ -96,17 +93,20 @@ document.getElementById("doScreenShot").addEventListener("click", function (even
     event.preventDefault();
 
     const tidInput = document.getElementById("tidInput").value.trim();
+    const duration = document.getElementById("secondsInput").value.trim() * 1000;
+    const interval = document.getElementById("intervalInput").value.trim() * 1000;
 
-    // Dynamically construct screenshot message
     const scrShot = {
         type: "MDM",
         profileId: tidInput,
         command: "screenCapture",
         properties: {
             type: "screenshot",
-            screenContentType: "responseBase64"
+            screenContentType: "responseBase64",
+            duration: duration,
+            interval: interval
         },
-        id: "Milos - " + Math.random().toString(36).substr(2, 9), // Unique ID using random string
+        id: "Milos - " + Math.random().toString(36).substr(2, 9),
         timestamp: new Date().toISOString(),
     };
 
@@ -129,61 +129,14 @@ document.getElementById("doScreenShot").addEventListener("click", function (even
         });
 });
 
-
-// Trigger Screenshot and open modal
-document.getElementById("doScreenShot").addEventListener("click", function (event) {
-    event.preventDefault();
-
-    const tidInput = document.getElementById("tidInput").value.trim();
-
-    // Dynamically construct screenshot message
-    const scrShot = {
-        type: "MDM",
-        profileId: tidInput,
-        command: "screenCapture",
-        properties: {
-            type: "screenshot",
-            screenContentType: "responseBase64"
-        },
-        id: "Milos - " + Math.random().toString(36).substr(2, 9), // Unique ID using random string
-        timestamp: new Date().toISOString(),
-    };
-
-    fetch("/doScreenShot", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ tid: tidInput, message: scrShot }),
-    })
-        .then(response => {
-            if (response.ok) {
-                console.log("Screenshot request sent successfully");
-
-                // Immediately open the modal after sending the request
-                const screenshotModal = new bootstrap.Modal(document.getElementById("screenshotModal"));
-                screenshotModal.show(); // Show the modal
-            } else {
-                console.error("Failed to send screenshot request", response.status);
-            }
-        })
-        .catch(error => {
-            console.error("Error sending screenshot request:", error);
-        });
-});
-
-// Update the message list and show the screenshot in the modal
+// Function to update the message list and update screenshot image
 const updateMessageList = (backend_msg) => {
-    const messagesContainer = document.querySelector(".messages");
+    const screenshotImage = document.querySelector(".screenshotImage img");
 
     const image = backend_msg.message.properties?.screenCapture;
     if (image) {
-        // Display the screenshot in the modal if it exists
-        document.getElementById("screenshotImage").src = `data:image/png;base64,${image}`;
-
-        // If the modal isn't already shown, display it
-        const screenshotModal = new bootstrap.Modal(document.getElementById("screenshotModal"));
-        screenshotModal.show();
+        console.log("Base64 image data received:", image);
+        screenshotImage.src = `data:image/png;base64,${image}`;
     } else {
         console.log("No screenshot available.");
     }
@@ -200,10 +153,10 @@ const updateMessageList = (backend_msg) => {
     <div class="accordion-item">
         <h2 class="accordion-header" id="heading_${backend_msg.key}">
             <button class="accordion-button collapsed ${accordionClass} text-white align-content-around" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_${accordionId}" aria-expanded="false" aria-controls="collapse_${accordionId}">
-                <strong>Tid:&nbsp;${backend_msg.key}</strong> <- || -> <strong>Timestamp:</strong>&nbsp;${backend_msg.message.timestamp} <- || -> <strong>Status:</strong>&nbsp;${code} <- || -> <strong>Message:</strong>&nbsp;${messageText} <- || -> <strong>Term_Resp:</strong>&nbsp;${termResponse}
+                <strong>TID:&nbsp;${backend_msg.key}</strong> | <strong>Timestamp:</strong>&nbsp;${backend_msg.message.timestamp} | <strong>Status:</strong>&nbsp;${code} | <strong>Message:</strong>&nbsp;${messageText} | <strong>Term_Resp:</strong>&nbsp;${termResponse}
             </button>
         </h2>
-        <div id="collapse_${accordionId}" class="accordion-collapse collapse" aria-labelledby="heading_${backend_msg.key}" data-bs-parent="#accordionExample">
+        <div id="collapse_${accordionId}" class="accordion-collapse collapse w-auto" aria-labelledby="heading_${backend_msg.key}" data-bs-parent="#accordionExample">
             <div class="accordion-body">
                 <pre>${JSON.stringify(backend_msg, null, 2)}</pre>
             </div>
@@ -211,11 +164,11 @@ const updateMessageList = (backend_msg) => {
     </div>`;
 
     // Insert the accordion item into the DOM
-    messagesContainer.querySelector('.accordion').insertAdjacentHTML('afterbegin', newAccordionItem);
+    document.querySelector('.accordion').insertAdjacentHTML('afterbegin', newAccordionItem);
 };
 
 // Listen for 'message' events from the server
 socket.on("message", (backend_msg) => {
+    console.log("Received backend message:", backend_msg);
     updateMessageList(backend_msg);
-    console.log(backend_msg);
 });

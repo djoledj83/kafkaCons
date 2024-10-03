@@ -104,7 +104,8 @@ const sendKafkaMessage = async (topic, message) => {
 // Handle the POST request to store the tid and start consumer
 app.post('/term', (req, res) => {
     tid = req.body.tid;
-    const topics = ['event-transaction', 'event-log', 'mdm-response', 'event-system'];
+    // const topics = ['event-transaction', 'event-log', 'mdm-response', 'event-system'];
+    const topics = ['event-transaction', 'mdm-response', 'event-system'];
     startConsumer(topics);
     res.sendStatus(200);
 });

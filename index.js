@@ -62,6 +62,7 @@ const startConsumer = async (topics) => {
 
                         console.log('Received tid:', tid);
                         console.log('Received topic:', topic);
+                        console.log('Received topic:', value.message);
 
                         // Emit the message to all connected clients
                         io.emit('message', { key, message: value });
@@ -104,8 +105,9 @@ const sendKafkaMessage = async (topic, message) => {
 // Handle the POST request to store the tid and start consumer
 app.post('/term', (req, res) => {
     tid = req.body.tid;
+    const topics = ['event-log'];
     // const topics = ['event-transaction', 'event-log', 'mdm-response', 'event-system'];
-    const topics = ['event-transaction', 'mdm-response', 'event-system'];
+    // const topics = ['event-transaction', 'mdm-response', 'event-system'];
     startConsumer(topics);
     res.sendStatus(200);
 });

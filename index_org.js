@@ -55,8 +55,8 @@ app.post('/term', (req, res) => {
     // In this example, I'm storing it in a global variable
     tid = req.body.tid;
     // topic = req.body.topic;
-    // const topics = ['event-log', 'mdm-response', 'event-system'];
-    const topics = ['event-transaction'];
+    const topics = ['event-log', 'mdm-response', 'event-system', 'event-transaction'];
+    // const topics = ['event-transaction'];
     // const topics = ['event-system'];
     res.sendStatus(200); // Respond with a success status
 

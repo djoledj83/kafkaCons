@@ -1,19 +1,44 @@
 * {
-    /* border: 1px solid red; */
+  /* border: 1px solid red; */
+}
+.messages {
+  margin: 30px 0 0 0;
+  height: 600px;
+  border: 1px solid red;
+  overflow: scroll;
+  scroll-behavior: auto;
+}
+.poruka {
+  padding: 5px;
+  font-weight: bold;
 }
 
 img {
-    height: 500px;
-    width: auto;
-    border-radius: 20px;
+  height: 500px;
+  width: auto;
+  border-radius: 20px;
 }
 .accordion-container {
-    max-height: 200px; /* Podesi ovo na visinu koja odgovara otprilike 5 stavki */
-    overflow-y: auto;
+  /* max-height: 200px; Podesi ovo na visinu koja odgovara otprilike 5 stavki */
 }
 
-/* .message {
-        color: rgb(46, 46, 46);
-        font-weight: 100;
-        font-size: 12px;
-} */
+.key {
+  background-color: rgb(255, 99, 99);
+  padding: 5px;
+  border-radius: 5px;
+}
+.level {
+  background-color: rgb(99, 198, 255);
+  padding: 5px;
+  border-radius: 5px;
+}
+.source {
+  background-color: rgb(253, 240, 119);
+  padding: 5px;
+  border-radius: 5px;
+}
+.message {
+  background-color: rgb(202, 255, 104);
+  padding: 5px;
+  border-radius: 5px;
+}

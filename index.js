@@ -28,7 +28,7 @@ const kafka = new Kafka({
     brokers: [
         process.env.BROKER_1, process.env.BROKER_2, process.env.BROKER_3,
         process.env.BROKER_4, process.env.BROKER_5, process.env.BROKER_6,
-        process.env.BROKER_7, process.env.BROKER_8
+        process.env.BROKER_7, process.env.BROKER_8, process.env.BROKER_9
     ]
 });
 
@@ -99,50 +99,52 @@ const sendKafkaMessage = async (topic, message) => {
         console.error('Error sending message:', error);
     } finally {
         await producer.disconnect();
-    }
-};
 
-// Handle the POST request to store the tid and start consumer
-app.post('/term', (req, res) => {
-    tid = req.body.tid;
-    const topics = ['event-log'];
-    // const topics = ['event-transaction', 'event-log', 'mdm-response', 'event-system'];
-    // const topics = ['event-transaction', 'mdm-response', 'event-system'];
-    startConsumer(topics);
-    res.sendStatus(200);
-});
+    };
 
-// Handle message sending with Kafka producer
-app.post('/sendMessage', (req, res) => {
-    const message = req.body.message;
-    sendKafkaMessage('mdm-request', message);
-    res.sendStatus(200);
-});
+    // Handle the POST request to store the tid and start consumer
+    app.post('/term', (req, res) => {
+        tid = req.body.tid;
+        const topics = ['event-transaction'];
+        // const topics = ['event-log', 'event-transaction']; s
+        // const topics = ['event-transaction', 'event-log', 'mdm-response', 'event-system'];
+        // const topics = ['event-transaction', 'mdm-response', 'event-system'];
+        startConsumer(topics);
+        res.sendStatus(200); a
+    });
 
-// Handle screenshot requests
-app.post('/doScreenShot', (req, res) => {
-    const message = req.body.message;
-    sendKafkaMessage('mdm-request', message);
-    res.sendStatus(200);
-});
+    // Handle message sending with Kafka producer
+    app.post('/sendMessage', (req, res) => {
+        const message = req.body.message;
+        sendKafkaMessage('mdm-request', message);
+        res.sendStatus(200);
+    });
 
-// Stop Kafka consumer and handle consumer stopping
-app.post('/stop-consumer', async (req, res) => {
-    try {
-        await stopConsumer();
-        res.redirect('/');
-    } catch (error) {
-        console.error('Error stopping consumer:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
+    // Handle screenshot requests
+    app.post('/doScreenShot', (req, res) => {
+        const message = req.body.message;
+        sendKafkaMessage('mdm-request', message);
+        res.sendStatus(200);
+    });
 
-// Render the index page with messages
-app.get('/', (req, res) => {
-    res.render('index', { messages });
-});
+    // Stop Kafka consumer and handle consumer stopping
+    app.post('/stop-consumer', async (req, res) => {
+        try {
+            await stopConsumer();
+            res.redirect('/');
+        } catch (error) {
+            console.error('Error stopping consumer:', error);
+            res.status(500).send('Internal Server Error');
+        }
+    });
 
-// Start the server
-server.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
+    // Render the index page with messages
+    app.get('/', (req, res) => {
+        res.render('index', { messages });
+    });
+
+    // Start the server
+    server.listen(port, () => {
+        console.log(`Server running on port ${port}`);
+    })
+}

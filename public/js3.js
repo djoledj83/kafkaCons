@@ -46,86 +46,10 @@ document.getElementById("stopConsumerBtn").addEventListener("click", function (e
         });
 });
 
-// Produce Notification Message
-document.getElementById("sendButton").addEventListener("click", function (event) {
+// Log Button (optional functionality, modify as needed)
+document.getElementById("logBtn").addEventListener("click", function (event) {
     event.preventDefault();
-
-    const tidInput = document.getElementById("tidInput").value.trim();
-    const messageInput = document.getElementById("messageInput").value.trim();
-
-    const logMessage = {
-        type: "MDM",
-        profileId: tidInput,
-        command: "pushNotification",
-        id: Math.random().toString(36).substr(2, 9),
-        timestamp: new Date().toISOString(),
-        properties: {
-            type: "yesNoQuestion",
-            title: "Notification",
-            message: messageInput,
-            ttl: 30,
-            image: { content: "" },
-            ignorable: false
-        }
-    };
-    fetch("/sendMessage", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ tid: tidInput, message: logMessage }),
-    })
-        .then(response => {
-            if (response.ok) {
-                console.log("Notification sent successfully");
-            } else {
-                console.error("Failed to send notification", response.status);
-            }
-        })
-        .catch(error => {
-            console.error("Error sending notification:", error);
-        });
-});
-
-// Trigger Screenshot
-document.getElementById("doScreenShot").addEventListener("click", function (event) {
-    event.preventDefault();
-
-    const tidInput = document.getElementById("tidInput").value.trim();
-    const duration = document.getElementById("secondsInput").value.trim() * 1000;
-    const interval = document.getElementById("intervalInput").value.trim() * 1000;
-
-    const scrShot = {
-        type: "MDM",
-        profileId: tidInput,
-        command: "screenCapture",
-        properties: {
-            type: "screenshot",
-            screenContentType: "responseBase64",
-            duration: duration,
-            interval: interval
-        },
-        id: "Milos - " + Math.random().toString(36).substr(2, 9),
-        timestamp: new Date().toISOString(),
-    };
-
-    fetch("/doScreenShot", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ tid: tidInput, message: scrShot }),
-    })
-        .then(response => {
-            if (response.ok) {
-                console.log("Screenshot request sent successfully");
-            } else {
-                console.error("Failed to send screenshot request", response.status);
-            }
-        })
-        .catch(error => {
-            console.error("Error sending screenshot request:", error);
-        });
+    console.log("Log button clicked");
 });
 
 // Function to update the message list and update screenshot image

@@ -30,14 +30,14 @@ document.getElementById("tidForm").addEventListener("submit", (event) => {
 });
 
 // Log button click handler
-document.getElementById("logBtn").addEventListener("click", () => {
-    const tid = document.getElementById("tidInput").value.trim();
-    if (tid) {
-        submitTid(tid);
-    } else {
-        console.error("TID input is empty");
-    }
-});
+// document.getElementById("logBtn").addEventListener("click", () => {
+//     const tid = document.getElementById("tidInput").value.trim();
+//     if (tid) {
+//         submitTid(tid);
+//     } else {
+//         console.error("TID input is empty");
+//     }
+// });
 
 // Stop Consumer button click handler
 document.getElementById("stopConsumerBtn").addEventListener("click", (event) => {
@@ -56,6 +56,48 @@ document.getElementById("stopConsumerBtn").addEventListener("click", (event) => 
         })
         .catch((error) => console.error("Error stopping consumer:", error));
 });
+
+// Produce Notification Message
+document.getElementById("sendButton").addEventListener("click", function (event) {
+    event.preventDefault();
+
+    const tidInput = document.getElementById("tidInput").value.trim();
+    const messageInput = document.getElementById("messageInput").value.trim();
+
+    const logMessage = {
+        type: "MDM",
+        profileId: tidInput,
+        command: "pushNotification",
+        id: Math.random().toString(36).substr(2, 9),
+        timestamp: new Date().toISOString(),
+        properties: {
+            type: "yesNoQuestion",
+            title: "Notification",
+            message: messageInput,
+            ttl: 30,
+            image: { content: "" },
+            ignorable: false
+        }
+    };
+    fetch("/sendMessage", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ tid: tidInput, message: logMessage }),
+    })
+        .then(response => {
+            if (response.ok) {
+                console.log("Notification sent successfully");
+            } else {
+                console.error("Failed to send notification", response.status);
+            }
+        })
+        .catch(error => {
+            console.error("Error sending notification:", error);
+        });
+});
+
 
 // Function to parse backend message
 const parseMessage = (msg) => {

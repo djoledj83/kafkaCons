@@ -30,6 +30,7 @@ const kafka = new Kafka({
 })
 // Kafka consumer setup
 const consumer = kafka.consumer({ groupId: process.env.GROUP_ID });
+const producer = kafka.producer();
 
 
 
@@ -98,7 +99,6 @@ app.post('/term', (req, res) => {
                             source: value.source,
                             timestamp: value.timestamp,
                         })
-
 
                         // Emit the message to all connected clients
                         io.emit('message', { key, message: value });
@@ -179,6 +179,30 @@ app.post('/stop-consumer', async (req, res) => {
         console.error("Error stopping consumer and pausing consumption:", error);
         res.status(500).send("Internal Server Error");
     }
+});
+
+// Function to send a Kafka message (producer)
+const sendKafkaMessage = async (topic, message) => {
+    try {
+        await producer.connect();
+        await producer.send({
+            topic: topic,
+            acks: -1, // acks=all
+            messages: [{ value: JSON.stringify(message) }],
+        });
+        console.log(`Message sent successfully to ${topic}`);
+    } catch (error) {
+        console.error('Error sending message:', error);
+    } finally {
+        await producer.disconnect();
+    };
+}
+
+// Handle message sending with Kafka producer
+app.post('/sendMessage', (req, res) => {
+    const message = req.body.message;
+    sendKafkaMessage('mdm-request', message);
+    res.sendStatus(200);
 });
 
 app.get('/', (req, res) => {
